@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sendTruckEvery = 75;
     setInterval(() => {
         truckTime+=1;
-        // console.log(truckTime);
+        console.log(truckTime);
         // periodActions();
     }, 100);
 
@@ -35,10 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Define major localities with an initial report count.
     const localities = [
-      { name: "Pandri", lat: 21.2800, lng: 81.68, count: 0, imp: 0 },
-      { name: "Naya Raipur", lat: 21.2100, lng: 81.6000, count: 0, imp: 0 },
-      { name: "Aranya", lat: 21.2300, lng: 81.6600, count: 0, imp: 0 },
-      { name: "Civil Lines", lat: 21.2750, lng: 81.59, count: 0, imp: 0 }
+      { name: "Pandri", lat: 21.2800, lng: 81.68, count: 0 },
+      { name: "Naya Raipur", lat: 21.2100, lng: 81.6000, count: 0 },
+      { name: "Aranya", lat: 21.2300, lng: 81.6600, count: 0 },
+      { name: "Civil Lines", lat: 21.2750, lng: 81.59, count: 0 }
     ];
   
     let localityMarkers = {};
@@ -123,10 +123,10 @@ document.addEventListener("DOMContentLoaded", () => {
   
     // Function to update the styles and popup texts for locality markers.
     function updateLocalityMarkers() {
-      let maxImp = Math.max(...localities.map(l => l.imp));
+      let maxCount = Math.max(...localities.map(l => l.count));
       localities.forEach(locality => {
         const marker = localityMarkers[locality.name];
-        if (locality.imp === maxImp) {
+        if (locality.count === maxCount && maxCount > 0) {
           marker.setStyle({ color: "red", fillColor: "red", fillOpacity: 0.8 });
           marker.bindPopup(`${locality.name} is most affected! Count: ${locality.count}`);
           // Update highlighted locality and draw blue route if it changes.
@@ -139,16 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
           marker.bindPopup(`${locality.name}: ${locality.count}`);
         }
       });
-    }
-    function heuristic(dist, sev){
-        let hoo;
-        switch(sev.toLowerCase()){
-            case 'low': hoo = 1; break;
-            case 'medium': hoo = 2; break;
-            case 'high': hoo = 3; break;
-            case 'critical': hoo = 4; break;
-        }
-        return dist*hoo;
     }
 
     async function getRouteData(lat1, lon1, lat2, lon2) {
@@ -215,15 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
           dashArray: "5,5"
         }).addTo(map);
   
-        //console.log(localities);
+        console.log(localities);
 
         // Increase the count for that locality and update marker styling.
         closest.count += 1;
-        var add = heuristic(minDistance, report.severity);
-        if(add){
-            closest.imp += add;
-            console.log(add);
-        }
         setInterval(() => {
             updateLocalityDisplay();
         }, 1000);
@@ -239,3 +224,4 @@ document.addEventListener("DOMContentLoaded", () => {
       reportList.prepend(reportItem);
     });
   });
+  
